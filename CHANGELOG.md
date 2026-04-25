@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+
+- Punishment ladder (multi-stage commands per VL threshold)
+- bStats integration (anonymized usage metrics)
+- More scaffold variants (rotation acceleration over time)
+- Web dashboard / REST endpoint for VL queries
+
 ## [0.1.0] - 2026-04-25
 
 First public release.
