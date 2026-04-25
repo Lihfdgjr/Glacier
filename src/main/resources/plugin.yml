@@ -1,0 +1,21 @@
+name: Glacier
+version: ${project.version}
+main: gg.glacier.Glacier
+author: Glacier
+description: Advanced AntiCheat for 1.8.8 (full client support via ViaVersion)
+softdepend: [ProtocolLib, ViaVersion, PlaceholderAPI]
+
+commands:
+  glacier:
+    description: Glacier main command
+    aliases: [ac, anticheat]
+    usage: /<command> help
+    permission: glacier.command
+
+permissions:
+  glacier.command:
+    default: op
+  glacier.alerts:
+    default: op
+  glacier.bypass:
+    default: false

@@ -1,0 +1,260 @@
+# ════════════════════════════════════════════════════════════
+#   Glacier AntiCheat  ·  Configuration
+# ════════════════════════════════════════════════════════════
+#
+#   Every check has the same three knobs:
+#       enabled       - true / false
+#       max-vl        - violation level at which the punishment fires
+#       punishment    - console command. {player} is replaced.
+#
+#   Edit, then run:  /glacier reload
+#
+# ════════════════════════════════════════════════════════════
+
+
+# ─── Alerts ─────────────────────────────────────────────────
+alerts:
+  # Shown to staff who ran "/glacier alerts"
+  prefix: "&8[&bGlacier&8]&r "
+  # Placeholders:
+  #   {player}  {check}  {type}  {vl}  {max-vl}  {ping}  {tps}  {info}
+  format: "&b{player}&7 failed &b{check} &8(&7{type}&8 · &7x{vl}&8) &8{info}"
+  cooldown-ms: 250
+  log-to-file: true
+
+
+# ─── Global ─────────────────────────────────────────────────
+global:
+  bypass-permission: "glacier.bypass"
+  # Ignore flags for this many ms after join / respawn
+  grace-period-ms: 4000
+
+
+# ─── Checks ─────────────────────────────────────────────────
+checks:
+
+  # ─ Combat ───────────────────────────────────────────────
+  autoclicker-a:
+    # Sustained CPS above limit (human ceiling ~15)
+    enabled: true
+    max-vl: 10
+    cps-limit: 20
+    punishment: "kick {player} &cAutoClicker"
+
+  autoclicker-b:
+    # Robotic click regularity (coefficient of variation)
+    enabled: true
+    max-vl: 15
+    min-samples: 12
+    cv-threshold: 0.04
+    punishment: "kick {player} &cAutoClicker"
+
+  autoclicker-c:
+    # Bimodal click distribution (burst-pause-burst macros)
+    enabled: true
+    max-vl: 12
+    min-samples: 20
+    bimodality-threshold: 5.0
+    punishment: "kick {player} &cAutoClicker"
+
+  reach:
+    # Attack distance with latency-adaptive slack.
+    # Effective cap = base-distance + min(max-latency-slack, txLatency * 0.0056).
+    # Latency is measured via transaction packets (sub-tick accurate), falling
+    # back to keep-alive RTT on servers where transactions aren't available.
+    enabled: true
+    max-vl: 12
+    base-distance: 3.0
+    max-latency-slack: 0.8
+    punishment: ""
+
+  killaura-a:
+    # Target outside field of view on hit
+    enabled: true
+    max-vl: 15
+    max-yaw-to-target: 60.0
+    punishment: "kick {player} &cKillAura"
+
+  killaura-b:
+    # Two attacks with no flying packet between them
+    enabled: true
+    max-vl: 8
+    punishment: "kick {player} &cKillAura"
+
+  killaura-c:
+    # Rotation GCD - detects quantized mouse movement from aim-bot modules
+    enabled: true
+    max-vl: 10
+    min-samples: 15
+    gcd-threshold: 65536
+    punishment: "kick {player} &cKillAura"
+
+  aim-a:
+    # Rotation delta on hit exceeds human turning speed
+    enabled: true
+    max-vl: 10
+    max-rotation-speed: 40.0
+    punishment: "kick {player} &cAim"
+
+  hitbox-a:
+    # Ray from eye does not pierce target's bounding box
+    enabled: true
+    max-vl: 10
+    slack: 0.15
+    max-range: 4.0
+    punishment: "kick {player} &cHitbox"
+
+  criticals-a:
+    # Crit hit registered while player is stably on the ground
+    enabled: true
+    max-vl: 12
+    punishment: "kick {player} &cCriticals"
+
+  # ─ Movement ─────────────────────────────────────────────
+  speed-a:
+    # Horizontal speed cap (sustained, buffered)
+    enabled: true
+    max-vl: 15
+    max-xz-per-tick: 0.36
+    punishment: "kick {player} &cSpeed"
+
+  speed-b:
+    # Predictive speed: actual delta vs friction+input model
+    enabled: true
+    max-vl: 15
+    slack: 0.03
+    punishment: "kick {player} &cSpeed"
+
+  fly-a:
+    # Sustained airtime with no descent
+    enabled: true
+    max-vl: 12
+    max-air-ticks: 30
+    punishment: "kick {player} &cFly"
+
+  nofall-a:
+    # Client claims onGround while clearly airborne
+    enabled: true
+    max-vl: 10
+    punishment: ""
+
+  phase-a:
+    # Player's body is inside a solid, non-passable block
+    enabled: true
+    max-vl: 8
+    punishment: "kick {player} &cPhase"
+
+  velocity-a:
+    # Ignored knockback - absorbed fraction below min-ratio
+    enabled: true
+    max-vl: 10
+    min-ratio: 0.30
+    punishment: ""
+
+  noweb-a:
+    # Moving through cobweb above vanilla drag speed
+    enabled: true
+    max-vl: 10
+    max-xz: 0.03
+    punishment: "kick {player} &cNoWeb"
+
+  noslow-a:
+    # Maintaining sprint speed while using an item (eating/drinking/bow/shield)
+    enabled: true
+    max-vl: 12
+    max-xz: 0.15
+    punishment: "kick {player} &cNoSlow"
+
+  # ─ World interaction ────────────────────────────────────
+  scaffold-a:
+    # Placing a block below while facing the same direction as the support face
+    enabled: true
+    max-vl: 12
+    max-yaw-diff: 60.0
+    punishment: "kick {player} &cScaffold"
+
+  scaffold-b:
+    # Rotation snap immediately before a below-feet place
+    enabled: true
+    max-vl: 10
+    max-snap: 25.0
+    punishment: "kick {player} &cScaffold"
+
+  scaffold-c:
+    # Below-feet placement while pitch is not directed downward
+    enabled: true
+    max-vl: 12
+    min-pitch: 30.0
+    punishment: "kick {player} &cScaffold"
+
+  fastplace-a:
+    # Place interval under threshold
+    enabled: true
+    max-vl: 12
+    min-interval-ms: 100
+    punishment: ""
+
+  fastbreak-a:
+    # Break interval under threshold
+    enabled: true
+    max-vl: 12
+    min-interval-ms: 80
+    punishment: ""
+
+  # ─ Inventory ────────────────────────────────────────────
+  inventory-move-a:
+    # Rotation / movement during open inventory
+    enabled: true
+    max-vl: 10
+    min-rotation: 5.0
+    min-move-xz: 0.10
+    punishment: ""
+
+  # ─ Invalid protocol ─────────────────────────────────────
+  bad-packets-a:
+    # Pitch outside [-90, 90]
+    enabled: true
+    max-vl: 3
+    punishment: "kick {player} &cBad packets"
+
+  bad-packets-b:
+    # Flying-packet burst (> burst-limit packets with sub-min-gap spacing)
+    enabled: true
+    max-vl: 8
+    burst-limit: 3
+    min-gap-ms: 15
+    punishment: "kick {player} &cBad packets"
+
+  # ─ Tick speed ───────────────────────────────────────────
+  timer:
+    # Client tick rate outpacing server (flying-packet interval)
+    enabled: true
+    max-vl: 10
+    balance-limit-ms: 120
+    punishment: "kick {player} &cTimer"
+
+  timer-b:
+    # Transaction-latency-compensated timer (lower false positives on lag)
+    enabled: true
+    max-vl: 10
+    balance-limit-ms: 80
+    jitter-allowance: 0.5
+    punishment: "kick {player} &cTimer"
+
+
+# ─── Integrations ───────────────────────────────────────────
+integrations:
+  discord:
+    enabled: false
+    webhook-url: ""
+    username: "Glacier"
+    # Only post if a single alert crosses this VL value
+    min-vl: 5.0
+    format: "`{player}` failed `{check}` (vl {vl}/{max-vl}) - {info}"
+
+  # Per-player violation-level persistence across restarts.
+  # Saves to plugins/Glacier/vl.yml, debounced async writes.
+  persistence:
+    enabled: true
+    # Periodic save interval in seconds (snapshots online players' VLs to disk).
+    periodic-save-seconds: 300

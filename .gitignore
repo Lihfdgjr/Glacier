@@ -1,0 +1,37 @@
+# Build output
+target/
+*.jar
+*.war
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+out/
+bin/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs / runtime
+*.log
+logs/
+plugins/Polar/logs/
+plugins/Polar/vl.yml
+hs_err_pid*.log
+
+# Local config that shouldn't be committed
+*.local.yml
+config.local.yml
+
+# Maven temp
+.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+
+# Local Maven distribution used by build scripts
+/.maven-local/
